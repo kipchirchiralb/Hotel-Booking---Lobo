@@ -208,3 +208,54 @@ INSERT INTO checkInCheckOutLogs (booking_type, booking_id, client_id, checkin_ti
 INSERT INTO bookingNotes (booking_type, booking_id, note) VALUES
 ('room', 1, 'Client requested early check-in.'),
 ('spot', 1, 'Client requested extra chairs.');
+
+
+
+-- more seeding data
+
+-- Insert 20 more Rooms (excluding room_ids 4444, 7777, 8888, 9090)
+INSERT INTO rooms (room_id, room_type, price_per_night, label, image_url) VALUES
+(1001, 'single', 7000, 'standard', 'https://images.pexels.com/photos/271743/pexels-photo-271743.jpeg'),
+(1002, 'double', 13000, 'deluxe', 'https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg'),
+(1003, 'single', 7500, 'executive', 'https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg'),
+(1004, 'suite', 18000, 'business suite', 'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg'),
+(1005, 'double', 11000, 'standard', 'https://images.pexels.com/photos/210265/pexels-photo-210265.jpeg'),
+(1006, 'single', 6500, 'regular', 'https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg'),
+(1007, 'double', 12500, 'premium', 'https://images.pexels.com/photos/26139/pexels-photo.jpg'),
+(1008, 'suite', 19000, 'luxury', 'https://images.pexels.com/photos/271619/pexels-photo-271619.jpeg'),
+(1009, 'single', 7200, 'cozy', 'https://images.pexels.com/photos/189296/pexels-photo-189296.jpeg'),
+(1010, 'double', 11500, 'deluxe', 'https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg'),
+(1011, 'suite', 17000, 'business', 'https://images.pexels.com/photos/271639/pexels-photo-271639.jpeg'),
+(1012, 'double', 13500, 'premium', 'https://images.pexels.com/photos/262048/pexels-photo-262048.jpeg'),
+(1013, 'single', 6800, 'basic', 'https://images.pexels.com/photos/271639/pexels-photo-271639.jpeg'),
+(1014, 'double', 14000, 'deluxe', 'https://images.pexels.com/photos/271639/pexels-photo-271639.jpeg'),
+(1015, 'suite', 19500, 'executive suite', 'https://images.pexels.com/photos/1457848/pexels-photo-1457848.jpeg'),
+(1016, 'single', 6900, 'compact', 'https://images.pexels.com/photos/271743/pexels-photo-271743.jpeg'),
+(1017, 'double', 12500, 'family', 'https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg'),
+(1018, 'suite', 18500, 'business suite', 'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg'),
+(1019, 'double', 13200, 'comfort', 'https://images.pexels.com/photos/261102/pexels-photo-261102.jpeg'),
+(1020, 'single', 6700, 'economy', 'https://images.pexels.com/photos/260931/pexels-photo-260931.jpeg');
+
+
+-- Insert 20 more Spots (excluding spot_ids 'twiga', 'kifaru', 'nyati', 'simba')
+INSERT INTO spots (spot_id, capacity_range, price, label, image_url) VALUES
+('duma', '1-4', 600, 'family', 'https://images.pexels.com/photos/260922/pexels-photo-260922.jpeg'),
+('mbuzi', '5-10', 900, 'friends', 'https://images.pexels.com/photos/262047/pexels-photo-262047.jpeg'),
+('tembo', '10-20', 1800, 'cooperate', 'https://images.pexels.com/photos/260922/pexels-photo-260922.jpeg'),
+('chui', '15-30', 3000, 'conference', 'https://images.pexels.com/photos/2343468/pexels-photo-2343468.jpeg'),
+('ndege', '5-15', 1200, 'business', 'https://images.pexels.com/photos/2062431/pexels-photo-2062431.jpeg'),
+('mbuni', '20-50', 5000, 'event', 'https://images.pexels.com/photos/260928/pexels-photo-260928.jpeg'),
+('pundamilia', '1-6', 800, 'friends', 'https://images.pexels.com/photos/210558/pexels-photo-210558.jpeg'),
+('nyumbu', '2-8', 750, 'team', 'https://images.pexels.com/photos/262047/pexels-photo-262047.jpeg'),
+('mbega', '10-25', 2500, 'gathering', 'https://images.pexels.com/photos/1170412/pexels-photo-1170412.jpeg'),
+('ngiri', '5-12', 1300, 'family', 'https://images.pexels.com/photos/1662159/pexels-photo-1662159.jpeg'),
+('kongoni', '1-4', 550, 'private', 'https://images.pexels.com/photos/2343468/pexels-photo-2343468.jpeg'),
+('nyoka', '8-18', 1600, 'workshop', 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg'),
+('kobe', '12-22', 2700, 'conference', 'https://images.pexels.com/photos/1170412/pexels-photo-1170412.jpeg'),
+('fisheagle', '3-6', 650, 'intimate', 'https://images.pexels.com/photos/297933/pexels-photo-297933.jpeg'),
+('swala', '10-30', 3200, 'training', 'https://images.pexels.com/photos/260922/pexels-photo-260922.jpeg'),
+('ndovu', '30-60', 6000, 'seminar', 'https://images.pexels.com/photos/210558/pexels-photo-210558.jpeg'),
+('paa', '5-9', 1000, 'friends', 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg'),
+('nyati2', '15-35', 3500, 'cooperate', 'https://images.pexels.com/photos/210558/pexels-photo-210558.jpeg'),
+('simba2', '25-50', 4800, 'corporate', 'https://images.pexels.com/photos/260922/pexels-photo-260922.jpeg'),
+('kifaru2', '20-40', 5200, 'business', 'https://images.pexels.com/photos/2062431/pexels-photo-2062431.jpeg');

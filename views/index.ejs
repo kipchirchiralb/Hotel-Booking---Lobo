@@ -4,8 +4,42 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lobo hotel Booking</title>
+    <link rel="stylesheet" href="/styles/main.css" />
   </head>
   <body>
     <h1>Lobo hotel Booking</h1>
+
+    <section>
+      <h2>Our Rooms</h2>
+      <div class="rooms-container">
+        <% locals.rooms.forEach(room=>{ %>
+
+        <div class="room">
+          <img src="<%= room.image_url %>" alt="<%= room.label %>" />
+          <h3><%= room.room_type %> - <%= room.label %></h3>
+          <p>KSH. <%= room.price_per_night %> Per Night</p>
+          <a href="/book?id=<%=room.room_id%>">Book Now</a>
+        </div>
+
+        <% }) %>
+      </div>
+    </section>
+
+    <section>
+      <h2>Our Spots</h2>
+      <div class="spots-container">
+        <!-- forEach spot -- div.spot  -->
+         <% locals.spots.forEach(spot=>{ %>
+
+          <div class="spot">
+            <img src="<%= spot.image_url %>" alt="<%= spot.spot_id %> spot">
+            <h3> <%= spot.spot_id %> - <span> <%= spot.label %> </span> </h3>
+            <p>Capacity:  <%= spot.capacity_range %> || Price per day: <%= spot.price %> </p>
+            <a href="/book?id=<%= spot.spot_id %>"> Book Now</a>
+          </div>
+
+        <% }) %>
+      </div>
+    </section>
   </body>
 </html>

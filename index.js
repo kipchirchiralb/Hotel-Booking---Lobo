@@ -1,5 +1,13 @@
 const express = require("express");
 const path = require("path");
+const mysql = require("mysql");
+
+const dbConnection = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "hotel_lobo",
+});
 
 const app = express();
 
@@ -10,7 +18,19 @@ app.use(express.urlencoded({ extended: true })); // for parsing application/x-ww
 // routes
 
 app.get("/", (req, res) => {
-  res.render("index.ejs");
+  dbConnection.query("SELECT * FROM rooms", (roomsSelectError, rooms) => {
+    if (roomsSelectError) {
+      res.status(500).send("Server Error: 500");
+    } else {
+      dbConnection.query("SELECT * FROM spots", (spotsSelectError, spots) => {
+        if (spotsSelectError) {
+          res.status(500).send("Server Error: 500");
+        } else {
+          res.render("index.ejs", { rooms, spots });
+        }
+      });
+    }
+  });
 });
 
 app.listen(3000, () => {
