@@ -140,6 +140,18 @@ CREATE TABLE bookingNotes(
     PRIMARY KEY(note_id)
 );
 
+-- // table users 
+CREATE TABLE users(email VARCHAR(100), name VARCHAR(50), role VARCHAR(50), password VARCHAR(255), PRIMARY KEY(email));
+
+-- users data
+INSERT INTO users (name, email, role, password)
+VALUES
+('Alice Reception', 'alice@company.com', 'reception', '$2b$10$zJZtBZHgDRPqkODyxwKMuOaU0XKkztHtHoEiX.Rz5OFLrWhd3WTNi'), -- admin123
+
+('Bob Manager', 'bob@company.com', 'manager', '$2b$10$zJZtBZHgDRPqkODyxwKMuOaU0XKkztHtHoEiX.Rz5OFLrWhd3WTNi'),     -- admin123
+
+('Catherine Admin', 'cat@company.com', 'superadmin', '$2b$10$zJZtBZHgDRPqkODyxwKMuOaU0XKkztHtHoEiX.Rz5OFLrWhd3WTNi'); -- admin123
+
 
 -- Insert Seed Data (WITH images)
 
