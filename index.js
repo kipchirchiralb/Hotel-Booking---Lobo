@@ -25,12 +25,14 @@ app.use(
 );
 
 // authorizarion middleware
-const superAdminRoutes = ["/newSpot", "/newRoom", "/checkout"];
-const receptionistRoutes = ["/checkout", "/checkin", "/roomUpdates"];
+const superAdminRoutes = ["/newSpot", "/newRoom"];
+const receptionistRoutes = ["/roomUpdates"];
 const managerRoutes = ["/addReceptionist", "/roomUpdates"];
+//
 // all other routes are public
 app.use((req, res, next) => {
   if (req.session.user) {
+    res.locals.user = req.session.user; // send user data to views/ejs
     // user islogged in  --- go ahead and check role and route they are accessing
     const userRole = req.session.user.role; // get user role from session
     if (userRole === "superadmin" && superAdminRoutes.includes(req.path)) {
@@ -47,7 +49,19 @@ app.use((req, res, next) => {
       next();
     } else {
       // user is not authorized to access this route
-      res.status(401).send("Unauthorized - 401");
+      // check if the route is public
+      if (
+        req.path === "/" ||
+        req.path === "/login" ||
+        req.path === "/about" ||
+        req.path === "/book" ||
+        req.path === "/checkout" ||
+        req.path === "/checkin"
+      ) {
+        next(); // allow access to public routes
+      } else {
+        res.status(401).send("Unauthorized - 401");
+      }
     }
   } else {
     // user is not logged in
@@ -62,7 +76,7 @@ app.use((req, res, next) => {
   }
 });
 
-// routes
+// PUBLIC ROUTES
 app.get("/", (req, res) => {
   dbConnection.query("SELECT * FROM rooms", (roomsSelectError, rooms) => {
     if (roomsSelectError) {
@@ -78,24 +92,34 @@ app.get("/", (req, res) => {
     }
   });
 });
-
 app.get("/login", (req, res) => {
   res.render("login.ejs");
 });
-
+app.get("/checkout", (req, res) => {
+  res.render("checkout.ejs");
+});
+app.get("/checkin", (req, res) => {
+  res.render("checkin.ejs");
+});
+app.get("/about", (req, res) => {
+  res.render("about.ejs");
+});
+app.get("/book", (req, res) => {
+  res.render("book.ejs");
+});
+// END OF PUBLIC ROUTES
+app.get("/bookings", (req, res) => {
+  res.render("bookings.ejs");
+});
 app.get("/newSpot", (req, res) => {
   res.render("newSpot.ejs");
 });
 app.get("/newRoom", (req, res) => {
   res.render("newRoom.ejs");
 });
-app.get("/checkout", (req, res) => {
-  res.render("checkout.ejs");
-});
 app.get("/addReceptionist", (req, res) => {
   res.render("addReceptionist.ejs");
 });
-
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   dbConnection.query(
@@ -124,7 +148,7 @@ app.post("/login", (req, res) => {
   );
 });
 
-console.log(bcrypt.hashSync("admin678", 3)); // hash password - for testing
+// console.log(bcrypt.hashSync("admin678", 3)); // hash password - for testing
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");

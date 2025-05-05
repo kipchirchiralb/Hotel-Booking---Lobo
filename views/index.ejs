@@ -7,7 +7,14 @@
     <link rel="stylesheet" href="/styles/main.css" />
   </head>
   <body>
-    <h1>Lobo hotel Booking</h1>
+    <%- include("_header.ejs") %>
+
+    <section class="hero">
+      <div class="backdrop"></div>
+      <h1>Welcome to Lobo Hotel</h1>
+      <p>Experience luxury and comfort like never before.</p>
+      <a href="/book" class="cta">Book Now</a>
+    </section>
 
     <section>
       <h2>Our Rooms</h2>
@@ -29,14 +36,17 @@
       <h2>Our Spots</h2>
       <div class="spots-container">
         <!-- forEach spot -- div.spot  -->
-         <% locals.spots.forEach(spot=>{ %>
+        <% locals.spots.forEach(spot=>{ %>
 
-          <div class="spot">
-            <img src="<%= spot.image_url %>" alt="<%= spot.spot_id %> spot">
-            <h3> <%= spot.spot_id %> - <span> <%= spot.label %> </span> </h3>
-            <p>Capacity:  <%= spot.capacity_range %> || Price per day: <%= spot.price %> </p>
-            <a href="/book?id=<%= spot.spot_id %>"> Book Now</a>
-          </div>
+        <div class="spot">
+          <img src="<%= spot.image_url %>" alt="<%= spot.spot_id %> spot" />
+          <h3><%= spot.spot_id %> - <span> <%= spot.label %> </span></h3>
+          <p>
+            Capacity: <%= spot.capacity_range %> || Price per day: <%=
+            spot.price %>
+          </p>
+          <a href="/book?id=<%= spot.spot_id %>"> Book Now</a>
+        </div>
 
         <% }) %>
       </div>
