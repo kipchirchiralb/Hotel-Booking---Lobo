@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <style>
+      .container {
+        display: flex;
+        align-items: start;
+        min-height: 100vh;
+      }
+      .container sub-nav {
+        width: 200px;
+        background-color: #201e1e;
+        padding: 20px;
+        color: whitesmoke;
+        height: 100%;
+      }
+      .container main {
+        background-color: aquamarine;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <%- include("../_header.ejs") %>
+    <h1>Manager Dashboard</h1>
+    <div class="container">
+      <nav class="sub-nav">
+        <a href="/addReceptionist">Add New Receptionis</a>
+        <a href="/addManager">Add New Manager</a>
+        <a href="/addNewRoom"> Add New Room </a>
+        <a href="/addNewSpot"> Add New Spot </a>
+      </nav>
+      <main>
+        <!-- Dashboard content here  -->
+      </main>
+    </div>
+
+    <!-- 
+        Manager Dashboard
+        -- View all users and their roles
+        -- Add new receptionist and manager
+        -- View all bookings and their status
+        -- View all clients and their details
+        -- View all rooms and their status
+        -- View all spots and their status
+        -- add new rooms and spots
+ -->
+  </body>
+</html>
