@@ -3,6 +3,7 @@ const path = require("path");
 const mysql = require("mysql");
 const bcrypt = require("bcrypt");
 const session = require("express-session");
+const cors = require("cors");
 
 const dbConnection = mysql.createConnection({
   host: "localhost",
@@ -13,7 +14,9 @@ const dbConnection = mysql.createConnection({
 
 const app = express();
 
-// middleware
+// middleware --------- Cors , crsf , 
+app.use(cors()); // enable CORS for all routes
+app.use(express.json()); // for parsing application/json
 app.use(express.static(path.join(__dirname, "public"))); // path -- nested routs /booking/user/id
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded - form data
 app.use(
@@ -118,8 +121,87 @@ app.get("/about", (req, res) => {
   res.render("about.ejs");
 });
 app.get("/book", (req, res) => {
-  res.render("book.ejs");
+  if (req.query.type == "room") {
+    dbConnection.query(
+      `SELECT * FROM rooms WHERE room_id=${req.query.id}`,
+      (error, roomData) => {
+        if (error) {
+          res.status(500).send("Server Error: 500");
+        } else {
+          res.render("book.ejs", {
+            image: roomData[0].image_url,
+            type: roomData[0].room_type,
+            price: roomData[0].price_per_night,
+            id: roomData[0].room_id,
+            room: true,
+          });
+        }
+      }
+    );
+  } else {
+    dbConnection.query(
+      `SELECT * FROM spots WHERE spot_id= '${req.query.id}'`,
+      (error, spotData) => {
+        if (error) {
+          res.status(500).send("Server Error: 500");
+        } else {
+          res.render("book.ejs", {
+            image: spotData[0].image_url,
+            type: spotData[0].label,
+            price: spotData[0].price,
+            capacity: spotData[0].capacity_range,
+            id: spotData[0].spot_id,
+            room: false,
+          });
+        }
+      }
+    );
+  }
 });
+app.post("/client-info", (req, res) => {
+  const { name, email, phone} = req.body
+  // check if the client already exists in the database
+  dbConnection.query(`SELECT * FROM clients WHERE email = '${email}'`, (error, clientData) => {
+    if (error) {
+      res.status(500).json({ message: "Server Error: 500", success: false });
+    } else {
+      if (clientData.length > 0) {
+        // client already exists - update the client data
+        dbConnection.query(
+          `UPDATE clients SET full_name = "${name}", phone_number = "${phone}" WHERE email = "${email}"`,
+          (error) => {
+            if (error) {
+              res.status(500).json({ message: "Server Error: 500", success: false });
+            } else {
+              res.json({ message: "Client data updated successfully", success: true, clientID: clientData[0].client_id });
+            }
+          }
+        );
+      } else {
+        // client does not exist - insert new client data
+        dbConnection.query(
+          `INSERT INTO clients(full_name, email, phone_number) VALUES ("${name}", "${email}", "${phone}")`,
+          (error) => {
+            if (error) {
+              res.status(500).json({ message: "Server Error: 500", success: false });
+            } else {
+              // get the client ID of the newly inserted client
+              dbConnection.query(`SELECT * FROM clients WHERE email = '${email}'`, (error, clientData) => {
+                if (error) {
+                  res.status(500).json({ message: "Server Error: 500", success: false });
+                } else {
+                  res.json({ message: "Client data inserted successfully", success: true, clientID: clientData[0].client_id });
+                }
+              });
+            }
+          }
+        );
+      }
+    }
+
+  })
+ 
+})
 // END OF PUBLIC ROUTES
 app.get("/bookings", (req, res) => {
   res.render("bookings.ejs");

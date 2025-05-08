@@ -13,10 +13,10 @@
       <div class="backdrop"></div>
       <h1>Welcome to Lobo Hotel</h1>
       <p>Experience luxury and comfort like never before.</p>
-      <a href="/book" class="cta">Book Now</a>
+      <a href="/#rooms" class="cta">Book Now</a>
     </section>
 
-    <section>
+    <section id="rooms">
       <h2>Our Rooms</h2>
       <div class="rooms-container">
         <% locals.rooms.forEach(room=>{ %>
@@ -25,7 +25,7 @@
           <img src="<%= room.image_url %>" alt="<%= room.label %>" />
           <h3><%= room.room_type %> - <%= room.label %></h3>
           <p>KSH. <%= room.price_per_night %> Per Night</p>
-          <a href="/book?id=<%=room.room_id%>">Book Now</a>
+          <a href="/book?id=<%=room.room_id%>&type=room">Book Now</a>
         </div>
 
         <% }) %>
@@ -45,7 +45,7 @@
             Capacity: <%= spot.capacity_range %> || Price per day: <%=
             spot.price %>
           </p>
-          <a href="/book?id=<%= spot.spot_id %>"> Book Now</a>
+          <a href="/book?id=<%= spot.spot_id %>&type=spot"> Book Now</a>
         </div>
 
         <% }) %>

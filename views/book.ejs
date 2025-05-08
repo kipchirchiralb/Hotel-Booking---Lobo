@@ -7,8 +7,85 @@
   </head>
   <body>
     <%- include("_header.ejs") %>
-    <h1>Book Room or Spot</h1>
+    <section class="info">
+      <h1>Book Room or Spot</h1>
+      <h2>You are booking this <%= locals.room? "Room" : "Spot" %></h2>
+
+      <div class="booking-details">
+        <img src="<%=locals.image%>" alt="<%= locals.type %>" width="300px" />
+        <h3>Room/Spot Type: <%= locals.type %></h3>
+        <h3>Room/Spot ID: <%= locals.id %></h3>
+        <h3>Price per Night/Day: KSH. <%= locals.price %></h3>
+        <h3>Capacity: <%= locals.capacity ? locals.capacity : "NA" %></h3>
+      </div>
+    </section>
+    <section class="client-info">
+      <h2>Client Information</h2>
+      <p>Please fill in your details to proceed with the booking.</p>
+      <form action="/client-info" method="POST" id="client-info-form">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required />
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required />
+
+        <label for="phone">Phone:</label>
+        <input type="tel" id="phone" name="phone" required />
+
+        <button type="submit">Submit Info</button>
+      </form>
+    </section>
+    <script>
+      const clientInfoForm = document.getElementById("client-info-form");
+
+      clientInfoForm.addEventListener("submit", (e) => {
+        e.preventDefault(); // browser default action of form submission
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const phone = document.getElementById("phone").value;
+        fetch("http://127.0.0.1:3000/client-info", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            phone,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              alert("Client info submitted successfully");
+            } else {
+              alert("Error submitting form. Please try again.");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      });
+    </script>
+
+    <section class="booking-info">
+      <h2>Booking Information</h2>
+      <p>Please fill in your booking details.</p>
+      <form action="/completeBooking" method="POST" >
+        <input type="hidden" name="type" id="type" value=" <%= locals.room? "room" : "spot"%> " />
+        <input type="hidden" name="id" id="id" value="<%= locals.id %>" />
+        <input type="hidden" name="client" id="client" value="" />
+        <label for="checkin">Check-in Date:</label>
+        <input type="date" id="checkin" name="checkin" required />
+
+        <label for="night">Number of nights(optional)</label>
+        <input type="number" id="nights" name="nights" />
+
+        <button type="submit">Complete Booking</button>
+      </form>
+    </section>
+
     <!-- allow any user to book a spot or a room -->
-    <!-- date/days , identify capacity -->
+    <!-- date/days , identify capacity  --- input type hidden --- csrf, cors -->
   </body>
 </html>

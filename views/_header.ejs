@@ -1,9 +1,9 @@
 <link rel="stylesheet" href="/styles/main.css" />
 <header>
   <% if(locals.user){ %>
-    <p><%= locals.user.name %></p>
+  <p><%= locals.user.name %></p>
   <% }else{ %>
-    <a href="/">The Lobo</a>
+  <a href="/">The Lobo</a>
   <% } %>
 
   <nav>
@@ -15,7 +15,7 @@
     <a href="/logout">Logout</a>
     <% }else{ %>
     <a href="/about">About</a>
-    <a href="/book"> Book Now</a>
+    <a href="/#rooms"> Book Now</a>
     <a href="/checkin">Checkin</a>
     <a href="/checkout">Checkout</a>
     <a href="/login">Login</a>
