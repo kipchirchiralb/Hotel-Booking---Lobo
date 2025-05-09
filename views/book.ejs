@@ -57,7 +57,14 @@
           .then((response) => response.json())
           .then((data) => {
             if (data.success) {
-              alert("Client info submitted successfully");
+              document.getElementById("client-info-form").style.display =
+                "none";
+              const message = document.createElement("p");
+              message.style.color = "green";
+              message.innerHTML =
+                "Your information was submitted successfully! <br> Now you can proceed to book your room/spot.";
+              document.querySelector(".client-info").appendChild(message);
+              document.getElementById("client").value = data.clientID; // Assuming the server returns a clientId
             } else {
               alert("Error submitting form. Please try again.");
             }
@@ -71,19 +78,33 @@
     <section class="booking-info">
       <h2>Booking Information</h2>
       <p>Please fill in your booking details.</p>
-      <form action="/completeBooking" method="POST" >
-        <input type="hidden" name="type" id="type" value=" <%= locals.room? "room" : "spot"%> " />
+      <form action="/completeBooking" method="POST" id="complete-booking-form">
+        <input type="hidden" name="type" id="type"
+        value="<%=locals.room?"room":"spot"%>" />
         <input type="hidden" name="id" id="id" value="<%= locals.id %>" />
         <input type="hidden" name="client" id="client" value="" />
         <label for="checkin">Check-in Date:</label>
         <input type="date" id="checkin" name="checkin" required />
 
-        <label for="night">Number of nights(optional)</label>
-        <input type="number" id="nights" name="nights" />
+        <label for="number">Number of nights/guests</label>
+        <input type="number" id="number" name="number" required />
 
         <button type="submit">Complete Booking</button>
       </form>
     </section>
+    <script>
+      // complete booking only if client info is submitted
+      const bookingForm = document.querySelector("#complete-booking-form");
+      bookingForm.addEventListener("submit", (e) => {
+        const clientID = document.getElementById("client").value;
+        if (!clientID) {
+          e.preventDefault();
+          alert(
+            "Please submit your client information before proceeding with the booking."
+          );
+        }
+      });
+    </script>
 
     <!-- allow any user to book a spot or a room -->
     <!-- date/days , identify capacity  --- input type hidden --- csrf, cors -->
