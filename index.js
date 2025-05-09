@@ -209,6 +209,7 @@ app.post("/completeBooking", (req, res) => {
     // client_id INT,room INT,number_of_nights INT,checkin_date DATE,
     dbConnection.query(`INSERT INTO roomBookings(room, client_id, number_of_nights, check_in_date) VALUES(${id}, ${client}, ${number}, "${checkin}")`, (error) => {
       if (error) {
+        console.log(error);        
         res.status(500).json({ message: "Server Error: 500", success: false });
       } else {
         res.json({ message: "Room booked successfully", success: true });
@@ -218,6 +219,7 @@ app.post("/completeBooking", (req, res) => {
     //  client_id INT,spot VARCHAR(20),checkin_datetime DATETIME, meals VARCHAR(60), booking_status VARCHAR(50) DEFAULT 'pending', number_of_guests INT
     dbConnection.query(`INSERT INTO spotBookings(spot, client_id, checkin_datetime, number_of_guests,meal) VALUES("${id}", ${client}, "${checkin}", ${number}, "all")`, (error) => {
       if (error) {
+        console.log(error);        
         res.status(500).json({ message: "Server Error: 500", success: false });
       } else {
         res.json({ message: "Spot booked successfully", success: true });
