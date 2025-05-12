@@ -1,13 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
-</head>
-<body>
+    <link rel="stylesheet" href="/styles/dash.css" />
+  </head>
+  <body>
     <%- include("../_header.ejs") %>
-    <h1>Receptionist  Dashboard</h1>
+    <h1>Receptionist Dashboard</h1>
+    <section class="bookings">
+      <h2>Recent Bookings(Past 5 days)</h2>
+      <div class="dash-stats">
+        <!-- divs for total bookings, room bookings, spot bookings, current checkins -->
+        <div class="dash-stat">
+          <h3>Total Bookings</h3>
+          <p><%= spotbookings.length + roombookings.length %></p>
+        </div>
+        <div class="dash-stat">
+          <h3>Room Bookings</h3>
+          <p><%= roombookings.length %></p>
+        </div>
+        <div class="dash-stat">
+          <h3>Spot Bookings</h3>
+          <p><%= spotbookings.length %></p>
+        </div>
+        <div class="dash-stat">
+          <h3>Current Checkins</h3>
+          <p><%= totalCheckins %></p>
+        </div>
+      </div>
+      <!-- recent bookings table -->
+      <h3>Spots</h3>
+      <table class="spot-bookings-table">
+        <tr>
+          <th>Booking ID</th>
+          <th>Client Name</th>
+          <th>Spot Name</th>
+          <th>Booking Date</th>
+          <th>Booking Status</th>
+          <th>Payment Status</th>
+          <th>Actions</th>
+        </tr>
+        <% spotbookings.forEach(booking=>{ %>
+        <tr>
+          <td><%= booking.id %></td>
+          <td><%= booking.clientName %></td>
+          <td><%= booking.spotName %></td>
+          <td><%= booking.bookingDate.toDateString() %></td>
+          <td><%= booking.status %></td>
+          <td><%= booking.paymentStatus %></td>
+          <td>
+            <a href="/confirmspotcheckin/<%= booking._id %>">Check In</a>
+            |
+            <a href="/confirmspotcheckout/<%= booking._id %>">Check Out</a>
+          </td>
+        </tr>
+        <%})%>
+      </table>
+      <h3>Rooms</h3>
+      <table class="room-bookings-table">
+        <tr>
+          <th>Booking ID</th>
+          <th>Client Name</th>
+          <th>Room ID</th>
+          <th>Booking Date</th>
+          <th>Booking Status</th>
+          <th>Payment Status</th>
+          <th>Actions</th>
+        </tr>
+
+        <% roombookings.forEach(booking=>{ %>
+        <tr>
+          <td><%= booking.id %></td>
+          <td><%= booking.clientName %></td>
+          <td><%= booking.room_id %></td>
+          <td><%= booking.bookingDate.toDateString() %></td>
+          <td><%= booking.status %></td>
+          <td><%= booking.paymentStatus %></td>
+          <td>
+            <a href="/confirmroomcheckin">Check In</a> |
+            <a href="/confirmroomcheckout">Check Out</a>
+          </td>
+        </tr>
+        <% }) %>
+      </table>
+    </section>
     <!-- 
         Receptionist Dashboard
         -- View bookings and their status upto to one week
@@ -17,6 +95,5 @@
         -- View all rooms and their status
         -- View all spots and their status
     -->
-    
-</body>
+  </body>
 </html>

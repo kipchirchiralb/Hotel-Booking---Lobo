@@ -14,7 +14,7 @@ const dbConnection = mysql.createConnection({
 
 const app = express();
 
-// middleware --------- Cors , crsf , 
+// middleware --------- Cors , crsf ,
 app.use(cors()); // enable CORS for all routes
 app.use(express.json()); // for parsing application/json
 app.use(express.static(path.join(__dirname, "public"))); // path -- nested routs /booking/user/id
@@ -76,7 +76,7 @@ app.use((req, res, next) => {
       ) {
         next(); // allow access to public routes
       } else {
-        res.status(401).send("Unauthorized - 401");
+        res.status(401).render("401.ejs");
       }
     }
   } else {
@@ -85,7 +85,7 @@ app.use((req, res, next) => {
       superAdminRoutes.includes(req.path) ||
       receptionistRoutes.includes(req.path)
     ) {
-      res.status(401).send("Unauthorized - 401");
+      res.status(401).render("401.ejs");
     } else {
       next();
     }
@@ -94,19 +94,29 @@ app.use((req, res, next) => {
 
 // PUBLIC ROUTES
 app.get("/", (req, res) => {
-  dbConnection.query("SELECT * FROM rooms", (roomsSelectError, rooms) => {
-    if (roomsSelectError) {
-      res.status(500).send("Server Error: 500");
+  if (req.session.user) {
+    if (req.session.user.role == "superadmin") {
+      res.redirect("/dash/superadmin");
+    } else if (req.session.user.role == "manager") {
+      res.redirect("/dash/manager");
     } else {
-      dbConnection.query("SELECT * FROM spots", (spotsSelectError, spots) => {
-        if (spotsSelectError) {
-          res.status(500).send("Server Error: 500");
-        } else {
-          res.render("index.ejs", { rooms, spots });
-        }
-      });
+      res.redirect("/dash/reception");
     }
-  });
+  } else {
+    dbConnection.query("SELECT * FROM rooms", (roomsSelectError, rooms) => {
+      if (roomsSelectError) {
+        res.status(500).send("Server Error: 500");
+      } else {
+        dbConnection.query("SELECT * FROM spots", (spotsSelectError, spots) => {
+          if (spotsSelectError) {
+            res.status(500).send("Server Error: 500");
+          } else {
+            res.render("index.ejs", { rooms, spots });
+          }
+        });
+      }
+    });
+  }
 });
 app.get("/login", (req, res) => {
   res.render("login.ejs");
@@ -126,7 +136,7 @@ app.get("/book", (req, res) => {
       `SELECT * FROM rooms WHERE room_id=${req.query.id}`,
       (error, roomData) => {
         if (error) {
-          res.status(500).send("Server Error: 500");
+          res.status(500).render("500.ejs");
         } else {
           res.render("book.ejs", {
             image: roomData[0].image_url,
@@ -143,7 +153,7 @@ app.get("/book", (req, res) => {
       `SELECT * FROM spots WHERE spot_id= '${req.query.id}'`,
       (error, spotData) => {
         if (error) {
-          res.status(500).send("Server Error: 500");
+          res.status(500).render("500.ejs");
         } else {
           res.render("book.ejs", {
             image: spotData[0].image_url,
@@ -159,74 +169,101 @@ app.get("/book", (req, res) => {
   }
 });
 app.post("/client-info", (req, res) => {
-  const { name, email, phone} = req.body
+  const { name, email, phone } = req.body;
   // check if the client already exists in the database
-  dbConnection.query(`SELECT * FROM clients WHERE email = '${email}'`, (error, clientData) => {
-    if (error) {
-      res.status(500).json({ message: "Server Error: 500", success: false });
-    } else {
-      if (clientData.length > 0) {
-        // client already exists - update the client data
-        dbConnection.query(
-          `UPDATE clients SET full_name = "${name}", phone_number = "${phone}" WHERE email = "${email}"`,
-          (error) => {
-            if (error) {
-              res.status(500).json({ message: "Server Error: 500", success: false });
-            } else {
-              res.json({ message: "Client data updated successfully", success: true, clientID: clientData[0].client_id });
-            }
-          }
-        );
+  dbConnection.query(
+    `SELECT * FROM clients WHERE email = '${email}'`,
+    (error, clientData) => {
+      if (error) {
+        res.status(500).json({ message: "Server Error: 500", success: false });
       } else {
-        // client does not exist - insert new client data
-        dbConnection.query(
-          `INSERT INTO clients(full_name, email, phone_number) VALUES ("${name}", "${email}", "${phone}")`,
-          (error) => {
-            if (error) {
-              res.status(500).json({ message: "Server Error: 500", success: false });
-            } else {
-              // get the client ID of the newly inserted client
-              dbConnection.query(`SELECT * FROM clients WHERE email = '${email}'`, (error, clientData) => {
-                if (error) {
-                  res.status(500).json({ message: "Server Error: 500", success: false });
-                } else {
-                  res.json({ message: "Client data inserted successfully", success: true, clientID: clientData[0].client_id });
-                }
-              });
+        if (clientData.length > 0) {
+          // client already exists - update the client data
+          dbConnection.query(
+            `UPDATE clients SET full_name = "${name}", phone_number = "${phone}" WHERE email = "${email}"`,
+            (error) => {
+              if (error) {
+                res
+                  .status(500)
+                  .json({ message: "Server Error: 500", success: false });
+              } else {
+                res.json({
+                  message: "Client data updated successfully",
+                  success: true,
+                  clientID: clientData[0].client_id,
+                });
+              }
             }
-          }
-        );
+          );
+        } else {
+          // client does not exist - insert new client data
+          dbConnection.query(
+            `INSERT INTO clients(full_name, email, phone_number) VALUES ("${name}", "${email}", "${phone}")`,
+            (error) => {
+              if (error) {
+                res
+                  .status(500)
+                  .json({ message: "Server Error: 500", success: false });
+              } else {
+                // get the client ID of the newly inserted client
+                dbConnection.query(
+                  `SELECT * FROM clients WHERE email = '${email}'`,
+                  (error, clientData) => {
+                    if (error) {
+                      res
+                        .status(500)
+                        .json({ message: "Server Error: 500", success: false });
+                    } else {
+                      res.json({
+                        message: "Client data inserted successfully",
+                        success: true,
+                        clientID: clientData[0].client_id,
+                      });
+                    }
+                  }
+                );
+              }
+            }
+          );
+        }
       }
     }
-
-  })
- 
-})
+  );
+});
 
 app.post("/completeBooking", (req, res) => {
-  const {id, type, client, number, checkin} = req.body // object destructuring
-  if(type == "room"){
+  console.log(req.body);
+  const { id, type, client, number, checkin } = req.body; // object destructuring
+  if (type == "room") {
     // client_id INT,room INT,number_of_nights INT,checkin_date DATE,
-    dbConnection.query(`INSERT INTO roomBookings(room, client_id, number_of_nights, check_in_date) VALUES(${id}, ${client}, ${number}, "${checkin}")`, (error) => {
-      if (error) {
-        console.log(error);        
-        res.status(500).json({ message: "Server Error: 500", success: false });
-      } else {
-        res.json({ message: "Room booked successfully", success: true });
+    dbConnection.query(
+      `INSERT INTO roomBookings(room, client_id, number_of_nights, checkin_date) VALUES(${id}, ${client}, ${number}, "${checkin}")`,
+      (error) => {
+        if (error) {
+          res.status(500).render("500.ejs");
+        } else {
+          res.render("bookingsuccess.ejs", {
+            message: "Room booked successfully",
+          });
+        }
       }
-    })
-  }else{
+    );
+  } else {
     //  client_id INT,spot VARCHAR(20),checkin_datetime DATETIME, meals VARCHAR(60), booking_status VARCHAR(50) DEFAULT 'pending', number_of_guests INT
-    dbConnection.query(`INSERT INTO spotBookings(spot, client_id, checkin_datetime, number_of_guests,meal) VALUES("${id}", ${client}, "${checkin}", ${number}, "all")`, (error) => {
-      if (error) {
-        console.log(error);        
-        res.status(500).json({ message: "Server Error: 500", success: false });
-      } else {
-        res.json({ message: "Spot booked successfully", success: true });
+    dbConnection.query(
+      `INSERT INTO spotBookings(spot, client_id, checkin_datetime, number_of_guests,meals) VALUES("${id}", ${client}, "${checkin}", ${number}, "all")`,
+      (error) => {
+        if (error) {
+          res.status(500).render("500.ejs");
+        } else {
+          res.render("bookingsuccess.ejs", {
+            message: "Spot booked successfully",
+          });
+        }
       }
-    })
+    );
   }
-})
+});
 // END OF PUBLIC ROUTES
 app.get("/bookings", (req, res) => {
   res.render("bookings.ejs");
@@ -247,7 +284,12 @@ app.get("/addReceptionist", (req, res) => {
 // END OF MANAGER ROUTES
 // Receptionist Routes
 app.get("/dash/reception", (req, res) => {
-  res.render("reception/dash.ejs");
+  // get all the data from db
+  res.render("reception/dash.ejs", {
+    spotbookings: [],
+    roombookings: [],
+    totalCheckins: 5,
+  });
 });
 // end of receptionist routes
 // super admin routes
@@ -262,7 +304,7 @@ app.post("/login", (req, res) => {
     `SELECT * FROM users WHERE email="${email}"`,
     (error, userData) => {
       if (error) {
-        res.status(500).send("Server Error: 500");
+        res.status(500).render("500.ejs");
       } else {
         if (userData.length == 0) {
           res.status(401).send("User not found");
