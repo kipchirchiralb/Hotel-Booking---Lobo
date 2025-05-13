@@ -42,18 +42,18 @@
           <th>Payment Status</th>
           <th>Actions</th>
         </tr>
-        <% spotbookings.forEach(booking=>{ %>
+        <% spotbookings.reverse().forEach(booking=>{ %>
         <tr>
           <td><%= booking.id %></td>
-          <td><%= booking.clientName %></td>
-          <td><%= booking.spotName %></td>
-          <td><%= booking.bookingDate.toDateString() %></td>
-          <td><%= booking.status %></td>
-          <td><%= booking.paymentStatus %></td>
+          <td><%= booking.full_name %></td>
+          <td><%= booking.spot %></td>
+          <td><%= booking.checkin_datetime.toDateString() %></td>
+          <td><%= booking.booking_status %></td>
+          <td><%= booking.amount_paid? "PAID" : "NOT PAID" %></td>
           <td>
-            <a href="/confirmspotcheckin/<%= booking._id %>">Check In</a>
+            <a href="/confirmspotcheckin/<%= booking.id %>">Check In</a>
             |
-            <a href="/confirmspotcheckout/<%= booking._id %>">Check Out</a>
+            <a href="/confirmspotcheckout/<%= booking.id %>">Check Out</a>
           </td>
         </tr>
         <%})%>
@@ -70,14 +70,14 @@
           <th>Actions</th>
         </tr>
 
-        <% roombookings.forEach(booking=>{ %>
+        <% roombookings.reverse().forEach(booking=>{ %>
         <tr>
           <td><%= booking.id %></td>
-          <td><%= booking.clientName %></td>
-          <td><%= booking.room_id %></td>
-          <td><%= booking.bookingDate.toDateString() %></td>
-          <td><%= booking.status %></td>
-          <td><%= booking.paymentStatus %></td>
+          <td><%= booking.full_name %></td>
+          <td><%= booking.room %></td>
+          <td><%= booking.checkin_date.toDateString() %></td>
+          <td><%= booking.booking_status %></td>
+          <td><%= booking.amount_paid? "PAID" : "NOT PAID" %></td>
           <td>
             <a href="/confirmroomcheckin">Check In</a> |
             <a href="/confirmroomcheckout">Check Out</a>

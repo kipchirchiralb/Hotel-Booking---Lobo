@@ -285,11 +285,40 @@ app.get("/addReceptionist", (req, res) => {
 // Receptionist Routes
 app.get("/dash/reception", (req, res) => {
   // get all the data from db
-  res.render("reception/dash.ejs", {
-    spotbookings: [],
-    roombookings: [],
-    totalCheckins: 5,
-  });
+  dbConnection.query(
+    "SELECT roombookings.booking_id as id, booking_status, room, number_of_nights, checkin_date, full_name, amount_paid FROM roombookings JOIN clients ON roombookings.client_id = clients.client_id left join payments on roombookings.booking_id = payments.booking_id AND payments.booking_type = 'room'",
+    (error, roombookings) => {
+      if (error) {
+        console.log(error);
+        return res.status(500).render("500.ejs");
+      }
+
+      dbConnection.query(
+        "SELECT spotbookings.booking_id as id, booking_status, spot, checkin_datetime, full_name, amount_paid FROM spotbookings JOIN clients ON spotbookings.client_id = clients.client_id left join payments on spotbookings.booking_id = payments.booking_id AND payments.booking_type = 'spot'",
+        (error, spotbookings) => {
+          if (error) {
+            console.log(error);
+            return res.status(500).render("500.ejs");
+          }
+          // render the page with the data
+          dbConnection.query(
+            "SELECT COUNT(log_id) as totalCheckins FROM checkincheckoutlogs WHERE checkout_time is NULL",
+            (error, totalCheckins) => {
+              if (error) {
+                console.log(error);
+                return res.status(500).render("500.ejs");
+              }
+              res.render("reception/dash.ejs", {
+                spotbookings: spotbookings,
+                roombookings: roombookings,
+                totalCheckins: totalCheckins[0].totalCheckins,
+              });
+            }
+          );
+        }
+      );
+    }
+  );
 });
 // end of receptionist routes
 // super admin routes

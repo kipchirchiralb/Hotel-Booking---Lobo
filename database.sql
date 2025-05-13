@@ -272,3 +272,59 @@ INSERT INTO spots (spot_id, capacity_range, price, label, image_url) VALUES
 ('nyati2', '15-35', 3500, 'cooperate', 'https://images.pexels.com/photos/210558/pexels-photo-210558.jpeg'),
 ('simba2', '25-50', 4800, 'corporate', 'https://images.pexels.com/photos/260922/pexels-photo-260922.jpeg'),
 ('kifaru2', '20-40', 5200, 'business', 'https://images.pexels.com/photos/2062431/pexels-photo-2062431.jpeg');
+
+
+
+
+
+-- joins
+
+SELECT room, number_of_nights, checkin_date, full_name, amount_paid FROM roombookings JOIN clients ON roombookings.client_id = clients.client_id left join payments on roombookings.booking_id = payments.booking_id;
+
+
+
+-- check room availability 
+
+SELECT
+    r.room_id,
+    r.label,
+    r.room_type,
+    r.price_per_night,
+    r.image_url,
+    CASE
+        WHEN EXISTS (
+            SELECT 1
+            FROM checkInCheckOutLogs log
+            JOIN roomBookings rb ON log.booking_id = rb.booking_id
+            WHERE log.booking_type = 'room'
+              AND log.checkout_time IS NULL
+              AND rb.room = r.room_id
+        )
+        THEN 'Not Available'
+        ELSE 'Available'
+    END AS availability
+FROM rooms r;
+
+
+
+-- check spot availability
+
+SELECT
+    s.spot_id,
+    s.label,
+    s.capacity_range,
+    s.price,
+    s.image_url,
+    CASE
+        WHEN EXISTS (
+            SELECT 1
+            FROM checkInCheckOutLogs log
+            JOIN spotBookings sb ON log.booking_id = sb.booking_id
+            WHERE log.booking_type = 'spot'
+              AND log.checkout_time IS NULL
+              AND sb.spot = s.spot_id
+        )
+        THEN 'Not Available'
+        ELSE 'Available'
+    END AS availability
+FROM spots s;
