@@ -51,9 +51,17 @@
           <td><%= booking.booking_status %></td>
           <td><%= booking.amount_paid? "PAID" : "NOT PAID" %></td>
           <td>
-            <a href="/confirmspotcheckin/<%= booking.id %>">Check In</a>
+            <a
+              href="/confirmspotcheckin?id=<%= booking.id %>&client=<%=booking.client%>"
+              style="color: green"
+              >Check In</a
+            >
             |
-            <a href="/confirmspotcheckout/<%= booking.id %>">Check Out</a>
+            <a
+              href="/confirmspotcheckout?id=<%= booking.id %>&client=<%=booking.client%>"
+              style="color: orange"
+              >Check Out</a
+            >
           </td>
         </tr>
         <%})%>
@@ -79,8 +87,17 @@
           <td><%= booking.booking_status %></td>
           <td><%= booking.amount_paid? "PAID" : "NOT PAID" %></td>
           <td>
-            <a href="/confirmroomcheckin">Check In</a> |
-            <a href="/confirmroomcheckout">Check Out</a>
+            <a
+              href="/confirmroomcheckin?id=<%= booking.id %>&client=<%=booking.client%>"
+              style="color: green"
+              >Check In</a
+            >
+            |
+            <a
+              href="/confirmroomcheckout?id=<%= booking.id %>&client=<%=booking.client%>"
+              style="color: orange"
+              >Check Out</a
+            >
           </td>
         </tr>
         <% }) %>
