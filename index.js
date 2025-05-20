@@ -4,6 +4,8 @@ const mysql = require("mysql");
 const bcrypt = require("bcrypt");
 const session = require("express-session");
 const cors = require("cors");
+const multer = require("multer");
+const upload = multer({ dest: "public/images" });
 
 const dbConnection = mysql.createConnection({
   host: "localhost",
@@ -42,6 +44,8 @@ const managerRoutes = [
   "/addNewSpot",
   "/addNewRoom",
   "/dash/manager",
+  "/manager/add-room",
+  "/manager/add-spot",
 ];
 const superAdminRoutes = [
   ...receptionistRoutes,
@@ -285,6 +289,26 @@ app.get("/addNewSpot", (req, res) => {
 app.get("/addNewRoom", (req, res) => {
   res.render("manager/newRoom.ejs");
 });
+
+app.post("/manager/add-room", upload.single("room_image"), (req, res) => {
+  console.log(req.body);
+  const {room_id,room_type,label,price_per_night} = req.body
+  console.log(req.file);
+  dbConnection.query(`INSERT INTO rooms(room_id, room_type,label,price_per_night,image_url) VALUES(${room_id},'${room_type}','${label}', ${price_per_night}, "/images/${req.file.filename}" )`, (newRoomErro)=>{
+    if(newRoomErro){
+      console.log(newRoomErro)      
+      res.status(500).render("500.ejs")
+    }else{
+      res.render("message.ejs", { message: "Room added succesfuly" });
+    }
+  }) 
+});
+
+app.post("/manager/add-spot", (req, res) => {
+  // logic
+  res.render("message.ejs", { message: "Spot added succesfuly" });
+});
+
 app.get("/addReceptionist", (req, res) => {
   res.render("manager/addReceptionist.ejs");
 });

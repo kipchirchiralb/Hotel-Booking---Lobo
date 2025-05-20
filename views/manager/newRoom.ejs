@@ -6,7 +6,31 @@
     <title>Document</title>
   </head>
   <body>
-    <%- include("_header.ejs") %>
+    <%- include("../_header.ejs") %>
+
     <h1>Add new room page</h1>
+    <form action="/manager/add-room" method="POST" enctype="multipart/form-data" >
+      <input type="number" name="room_id" id="room_id" placeholder="Room ID" />
+      <br />
+      <label for="Room type">Room type</label>
+      <select name="room_type" id="room_type">
+        <option value="single">Single</option>
+        <option value="double">Double</option>
+        <option value="suite">Suite</option>
+      </select>
+      <br />
+      <input type="text" name="label" placeholder="Label" required />
+      <input
+        type="number"
+        name="price_per_night"
+        placeholder="Price per Night"
+        required
+      />
+      <br />
+      <label for="room_image">Room Picture</label>
+      <input type="file" name="room_image" placeholder="Room Image" required />
+      <br />
+      <button type="submit">Add Room</button>
+    </form>
   </body>
 </html>
